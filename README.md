@@ -10,6 +10,11 @@ to a Mac mini M4 over a single USB-C cable (DisplayPort Alt Mode). See
 with raw wire captures, and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 for the design.
 
+<p align="center">
+  <img src="Assets/menu-light.png" alt="BrightnessBar menu, light mode" width="45%">
+  <img src="Assets/menu-dark.png" alt="BrightnessBar menu, dark mode" width="45%">
+</p>
+
 ## Install (one command)
 
 ```bash
