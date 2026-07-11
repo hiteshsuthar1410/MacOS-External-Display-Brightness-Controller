@@ -1,5 +1,11 @@
 # BrightnessBar — hardware brightness for external displays on macOS
 
+![Version](https://img.shields.io/github/v/tag/hiteshsuthar1410/MacOS-External-Display-Brightness-Controller?label=version&color=blue)
+![Swift](https://img.shields.io/badge/Swift-6.2-F05138?logo=swift&logoColor=white)
+![macOS](https://img.shields.io/badge/macOS-26%2B-000000?logo=apple&logoColor=white)
+![Apple Silicon](https://img.shields.io/badge/arch-Apple%20Silicon-333333)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 A menu bar app that changes the **actual backlight** of external monitors
 over DDC/CI — exactly like pressing the monitor's physical buttons. No
 overlays, no gamma tables, no software dimming.
