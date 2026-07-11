@@ -103,8 +103,7 @@ struct DisplaySliderRow: View {
                     get: { viewModel.brightness },
                     set: { viewModel.sliderMoved(to: $0) }
                 ),
-                in: 0...viewModel.maximum,
-                step: 1
+                in: 0...viewModel.maximum
             ) {
                 EmptyView()
             } minimumValueLabel: {
