@@ -8,17 +8,11 @@ let package = Package(
     ],
     products: [
         .library(name: "DDCKit", targets: ["DDCKit"]),
-        .executable(name: "brightness", targets: ["brightness"]),
         .executable(name: "BrightnessBar", targets: ["BrightnessBar"]),
     ],
     targets: [
         .target(
             name: "DDCKit",
-            swiftSettings: [.swiftLanguageMode(.v6)]
-        ),
-        .executableTarget(
-            name: "brightness",
-            dependencies: ["DDCKit"],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .executableTarget(

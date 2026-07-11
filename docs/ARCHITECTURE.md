@@ -1,14 +1,14 @@
 # Architecture — BrightnessController
 
-Three SwiftPM targets, zero external dependencies, Swift 6 strict concurrency.
+Two SwiftPM targets, zero external dependencies, Swift 6 strict concurrency.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ brightness (executable)   │ BrightnessBar (executable)  │
-│   BrightnessCLI — args    │   MenuBarExtra + sliders    │
-│   Commands — get/set/up/  │   AppModel — hot-plug,      │
-│    down/max/min/list/     │    launch-at-login          │
-│    diagnose               │   DisplayViewModel — debounce│
+│ BrightnessBar (executable, SwiftUI menu bar app)        │
+│   BrightnessBarApp — MenuBarExtra scene                 │
+│   AppModel         — discovery, hot-plug, launch-at-login│
+│   DisplayViewModel — slider state, debounced writes     │
+│   MenuView         — native sliders + settings          │
 ├─────────────────────────────────────────────────────────┤
 │ DDCKit (library)                                        │
 │   DisplayManager — discovery + CG↔IOKit matching        │
@@ -64,8 +64,8 @@ Protocol details implemented (VESA DDC/CI over I2C address 0x37):
   surfaced as `DDCError.unsupportedFeature` (and never retried — it is a
   definitive answer, not a transmission error).
 - **Set VCP (op 0x03):** write `[0x84, 0x03, code, hi, lo, chk]`. The spec
-  provides no acknowledgement, so the CLI always reads the value back and
-  reports what the monitor actually did.
+  provides no acknowledgement, so callers read the value back to confirm
+  what the monitor actually did.
 - **Capabilities (op 0xF3):** fragmented request/reply loop, 32-byte
   fragments reassembled until an empty fragment terminates the string.
 - **Retries:** 3 attempts with back-off for transport-level failures and
@@ -103,8 +103,9 @@ Every failure mode requested in the spec maps to a case:
 | Invalid brightness value | `.invalidValue(requested:maximum:)` |
 | Bad display selector | `.displayNotFound(Int)` |
 
-CLI exit codes: `0` success, `2` DDC/hardware errors, `64` (EX_USAGE) for
-malformed command lines, `1` for anything else.
+The app surfaces these as human-readable messages in the menu (e.g. a
+display with no DDC channel is listed with an explanation rather than
+silently hidden).
 
 ### Concurrency model
 
@@ -118,8 +119,8 @@ malformed command lines, `1` for anything else.
 
 ## Extension points
 
-- **Contrast / volume CLI verbs:** `DDCLink.read/write` already take any
-  `VCPCode`; add a subcommand that passes `.contrast` or `.audioVolume`.
+- **Contrast / volume sliders:** `DDCLink.read/write` already take any
+  `VCPCode`; add a second slider row bound to `.contrast` or `.audioVolume`.
 - **Menu bar app (implemented as `BrightnessBar`):** a `MenuBarExtra`
   (window style) with a native `Slider` per display. Slider movements
   update the UI immediately and debounce hardware writes by 80 ms through

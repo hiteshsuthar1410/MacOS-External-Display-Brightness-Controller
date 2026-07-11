@@ -65,9 +65,9 @@ too). Range: 0–100, continuous.
 
 ### 5. Is contrast supported?
 
-**Yes.** VCP 0x12 reads current=50, max=100 with a valid checksum. (The CLI
-reads contrast in `list`/`diagnose`; writing it would work the same way as
-brightness through `DDCLink.write(.contrast, value:)`.)
+**Yes.** VCP 0x12 reads current=50, max=100 with a valid checksum. Writing
+it works the same way as brightness, through
+`DDCLink.write(.contrast, value:)`.
 
 ### 6. Can input source be changed?
 
@@ -96,7 +96,7 @@ the survey below.
 | **MonitorControl** | **Yes** | Open-source menu-bar GUI. On Apple Silicon it uses exactly the `IOAVService` I2C path verified here. Good choice if you want a GUI today. |
 | **Lunar** | **Yes** | Freemium app, same `IOAVService` mechanism plus adaptive-brightness features. Overkill for one monitor but works. |
 | **BetterDisplay** | **Yes** | Commercial (free tier), same DDC mechanism plus many display-management extras. |
-| **m1ddc** | **Yes** | Minimal open-source CLI, Objective-C, purpose-built around `IOAVService`. The closest existing equivalent of the tool built here (ours adds discovery/matching, diagnostics, capabilities parsing, typed errors, and is pure Swift). |
+| **m1ddc** | **Yes** | Minimal open-source CLI, Objective-C, purpose-built around `IOAVService`. Uses the same mechanism as DDCKit here (ours adds discovery/matching, capabilities parsing, typed errors, and is pure Swift). |
 | **libddc** | **N/A** | No maintained macOS DDC library exists under this name (the ddcci libraries target Linux). Not needed: the IOKit exports make a C wrapper unnecessary. |
 | **IOKit display APIs (public)** | **Partially** | The *headered* display I2C APIs (`IOI2CInterface.h`, IOFramebuffer) are Intel-era and dead on M-series. The working IOKit path is the unheadered `IOAVService` family used here. |
 | **DisplayServices / CoreDisplay brightness calls** | **No** | Apple's private brightness setters (`DisplayServicesSetBrightness` etc.) only work for Apple-made panels (built-in, Studio Display, Pro Display XDR). Third-party externals are invisible to them — which is why macOS shows no brightness slider for this monitor. |
@@ -109,13 +109,14 @@ the survey below.
 - **USB HID / USB vendor protocol:** not applicable — the PM161Q enumerates
   as a pure display sink (plus USB audio), and DDC/CI already provides
   everything needed.
-- **Menu-bar-app-instead-of-CLI:** the CLI works, so the GUI is optional
-  rather than a fallback (see README for the extension path).
+- **Menu-bar-app as a fallback:** direct DDC control works, so the menu
+  bar app is the product by choice, not a fallback for a failed CLI path.
 
 ## Conclusion
 
 Native hardware backlight control is fully achievable in pure Swift on this
-exact hardware, and has been implemented and verified as the `brightness`
-CLI in this package. The only genuine limitation found is the firmware's
+exact hardware — verified transaction-by-transaction during this
+investigation and shipped as the BrightnessBar menu bar app in this
+package. The only genuine limitation found is the firmware's
 under-reporting capabilities string and its nonsense input-source values —
 both documented, neither affecting brightness/contrast control.

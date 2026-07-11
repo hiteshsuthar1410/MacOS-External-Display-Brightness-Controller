@@ -38,7 +38,7 @@ extension DDCError: LocalizedError {
         case .ddcUnavailable(let reason):
             return "DDC/CI is not available: \(reason)"
         case .displayNotFound(let id):
-            return "No display with identifier \(id). Run `brightness list` to see connected displays."
+            return "No display with identifier \(id) is connected."
         case .invalidValue(let requested, let maximum):
             return "Value \(requested) is out of range (0–\(maximum))."
         case .writeFailed(let code):
