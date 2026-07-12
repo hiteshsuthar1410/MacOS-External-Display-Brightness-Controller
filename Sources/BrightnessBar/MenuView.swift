@@ -113,6 +113,34 @@ struct DisplaySliderRow: View {
                 Image(systemName: "sun.max")
                     .foregroundStyle(.secondary)
             }
+
+            if let volume = viewModel.volume {
+                HStack {
+                    Text("Volume")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Text("\(Int(volume))")
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.top, 4)
+                Slider(
+                    value: Binding(
+                        get: { viewModel.volume ?? 0 },
+                        set: { viewModel.volumeSliderMoved(to: $0) }
+                    ),
+                    in: 0...viewModel.volumeMaximum
+                ) {
+                    EmptyView()
+                } minimumValueLabel: {
+                    Image(systemName: "speaker")
+                        .foregroundStyle(.secondary)
+                } maximumValueLabel: {
+                    Image(systemName: "speaker.wave.3")
+                        .foregroundStyle(.secondary)
+                }
+            }
         }
     }
 }

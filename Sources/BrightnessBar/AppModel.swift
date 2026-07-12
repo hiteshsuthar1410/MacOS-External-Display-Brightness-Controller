@@ -55,14 +55,23 @@ final class AppModel {
                 guard let link = display.link else { continue }
                 do {
                     let value = try await link.read(.brightness)
-                    let vm = DisplayViewModel(display: display, link: link, value: value)
-                    // Restore the remembered brightness for displays that
+                    // Volume (VCP 0x62) is optional; monitors without
+                    // speakers reject the query and get no volume slider.
+                    let volumeValue = try? await link.read(.audioVolume)
+                    let vm = DisplayViewModel(
+                        display: display, link: link,
+                        value: value, volumeValue: volumeValue)
+                    // Restore the remembered values for displays that
                     // just (re)connected, if the user opted in.
-                    if restoreOnReconnect,
-                        !knownDisplayKeys.contains(vm.persistenceKey),
-                        let saved = vm.savedBrightness,
-                        saved != value.current {
-                        await vm.apply(brightness: Double(saved))
+                    if restoreOnReconnect, !knownDisplayKeys.contains(vm.persistenceKey) {
+                        if let saved = vm.savedBrightness, saved != value.current {
+                            await vm.apply(brightness: Double(saved))
+                        }
+                        if let savedVolume = vm.savedVolume,
+                            let currentVolume = volumeValue?.current,
+                            savedVolume != currentVolume {
+                            await vm.apply(volume: Double(savedVolume))
+                        }
                     }
                     knownDisplayKeys.insert(vm.persistenceKey)
                     viewModels.append(vm)

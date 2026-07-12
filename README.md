@@ -51,6 +51,10 @@ A ☀️ icon in the menu bar with:
   backlight over DDC/CI. Writes are debounced so dragging stays smooth;
   values re-sync from the hardware every time the menu opens, so changes
   made with the monitor's physical buttons show up correctly.
+- A **volume slider** (shown only for displays that support VCP 0x62)
+  controlling the monitor's own speaker/headphone volume — the hardware
+  value you'd otherwise change through the OSD, independent of the Mac's
+  audio volume.
 - **Launch at login** toggle.
 - **Restore brightness on reconnect** — remembers the last brightness per
   display (keyed by EDID identity) and reapplies it when that display
