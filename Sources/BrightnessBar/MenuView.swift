@@ -114,6 +114,62 @@ struct DisplaySliderRow: View {
                     .foregroundStyle(.secondary)
             }
 
+            if let contrast = viewModel.contrast {
+                HStack {
+                    Text("Contrast")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Text("\(Int(contrast))")
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(Int(contrast) == Int(viewModel.contrastMidpoint) ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
+                }
+                .padding(.top, 4)
+                Slider(
+                    value: Binding(
+                        get: { viewModel.contrast ?? 0 },
+                        set: { viewModel.contrastSliderMoved(to: $0) }
+                    ),
+                    in: 0...viewModel.contrastMaximum
+                ) {
+                    EmptyView()
+                } minimumValueLabel: {
+                    Image(systemName: "circle.lefthalf.filled")
+                        .foregroundStyle(.secondary)
+                        .opacity(0.45)
+                } maximumValueLabel: {
+                    Image(systemName: "circle.lefthalf.filled")
+                        .foregroundStyle(.secondary)
+                        .opacity(1.0)
+                }
+                // Center tick marking the neutral (detent) position.
+                .background {
+                    RoundedRectangle(cornerRadius: 1)
+                        .fill(.tertiary)
+                        .frame(width: 2, height: 10)
+                }
+            }
+
+            if viewModel.colorPreset != nil {
+                HStack {
+                    Text("Color")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                }
+                .padding(.top, 4)
+                HStack(spacing: 6) {
+                    ForEach(ColorPreset.all) { preset in
+                        PresetButton(
+                            preset: preset,
+                            isActive: viewModel.colorPreset == preset.value
+                        ) {
+                            Task { await viewModel.select(preset: preset.value) }
+                        }
+                    }
+                }
+            }
+
             if let volume = viewModel.volume {
                 HStack {
                     Text("Volume")
@@ -142,5 +198,25 @@ struct DisplaySliderRow: View {
                 }
             }
         }
+    }
+}
+
+/// One color-temperature preset button; the active preset is tinted with
+/// the accent color.
+struct PresetButton: View {
+    let preset: ColorPreset
+    let isActive: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(preset.label)
+                .font(.caption)
+                .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.bordered)
+        .tint(isActive ? Color.accentColor : nil)
+        .controlSize(.small)
+        .help(preset.detail)
     }
 }

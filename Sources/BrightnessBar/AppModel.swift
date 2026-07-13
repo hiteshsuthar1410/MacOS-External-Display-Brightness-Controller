@@ -55,22 +55,32 @@ final class AppModel {
                 guard let link = display.link else { continue }
                 do {
                     let value = try await link.read(.brightness)
-                    // Volume (VCP 0x62) is optional; monitors without
-                    // speakers reject the query and get no volume slider.
+                    // Contrast, color preset and volume are optional;
+                    // displays that reject a query get no control for it.
+                    let contrastValue = try? await link.read(.contrast)
+                    let presetValue = try? await link.read(.colorPreset)
                     let volumeValue = try? await link.read(.audioVolume)
                     let vm = DisplayViewModel(
                         display: display, link: link,
-                        value: value, volumeValue: volumeValue)
+                        value: value, contrastValue: contrastValue,
+                        presetValue: presetValue, volumeValue: volumeValue)
                     // Restore the remembered values for displays that
                     // just (re)connected, if the user opted in.
                     if restoreOnReconnect, !knownDisplayKeys.contains(vm.persistenceKey) {
                         if let saved = vm.savedBrightness, saved != value.current {
                             await vm.apply(brightness: Double(saved))
                         }
-                        if let savedVolume = vm.savedVolume,
-                            let currentVolume = volumeValue?.current,
-                            savedVolume != currentVolume {
-                            await vm.apply(volume: Double(savedVolume))
+                        if let saved = vm.savedContrast,
+                            let current = contrastValue?.current, saved != current {
+                            await vm.apply(contrast: Double(saved))
+                        }
+                        if let saved = vm.savedPreset,
+                            let current = presetValue?.current, saved != current {
+                            await vm.select(preset: saved)
+                        }
+                        if let saved = vm.savedVolume,
+                            let current = volumeValue?.current, saved != current {
+                            await vm.apply(volume: Double(saved))
                         }
                     }
                     knownDisplayKeys.insert(vm.persistenceKey)

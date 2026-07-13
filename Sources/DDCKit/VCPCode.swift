@@ -14,6 +14,7 @@ public struct VCPCode: RawRepresentable, Hashable, Sendable {
     // Commonly used continuous controls.
     public static let brightness = VCPCode(rawValue: 0x10)
     public static let contrast = VCPCode(rawValue: 0x12)
+    public static let colorPreset = VCPCode(rawValue: 0x14)
     public static let audioVolume = VCPCode(rawValue: 0x62)
     public static let inputSource = VCPCode(rawValue: 0x60)
     public static let powerMode = VCPCode(rawValue: 0xD6)

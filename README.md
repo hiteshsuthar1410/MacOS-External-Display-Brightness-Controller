@@ -51,10 +51,20 @@ A ☀️ icon in the menu bar with:
   backlight over DDC/CI. Writes are debounced so dragging stays smooth;
   values re-sync from the hardware every time the menu opens, so changes
   made with the monitor's physical buttons show up correctly.
+- A **contrast slider** (VCP 0x12) with a detent at the panel's neutral
+  midpoint — it snaps back to 50 when released nearby, since mid is the
+  factory-correct contrast; a center tick marks the resting position.
+- **Color preset buttons** (VCP 0x14): sRGB, Warm (5000 K), Normal
+  (6500 K), Cool (9300 K) — the active preset is highlighted in the
+  accent color. These are the same presets as the monitor's OSD color
+  temperature menu.
 - A **volume slider** (shown only for displays that support VCP 0x62)
   controlling the monitor's own speaker/headphone volume — the hardware
   value you'd otherwise change through the OSD, independent of the Mac's
   audio volume.
+
+Each control appears only when the display actually answers the
+corresponding DDC query, so unsupported features simply don't show up.
 - **Launch at login** toggle.
 - **Restore brightness on reconnect** — remembers the last brightness per
   display (keyed by EDID identity) and reapplies it when that display
